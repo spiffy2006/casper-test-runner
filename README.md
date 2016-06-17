@@ -120,6 +120,7 @@ export default class GoogleHomePage {
   feelingLucky(searchStr) {
     this.enterSearch(searchStr);
     this.cm.click(this.feelingLuckyBtn);
+    return new GoogleSRP(this.cm); // returns instance of GoogleSRP class for easy method chaining
   }
   
   getSearchText() {
