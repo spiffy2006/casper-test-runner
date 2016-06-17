@@ -3,6 +3,14 @@
  */
 class ConfigMapper {}
 
+/**
+ * Replaces default values with custom values
+ * 
+ * @param {Object} defaults The default values
+ * @param {Object} custom The custom values
+ * 
+ * @returns {{}}
+ */
 ConfigMapper.map = (defaults, custom) => {
     let mapped = {};
     

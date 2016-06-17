@@ -6,6 +6,15 @@ import ConfigMapper from './lib/configMapper';
 import CasperManager from './lib/casperManager';
 
 export default class CasperTestRunner {
+    /**
+     * Runs casper tests in a given dist folder transpiled from es6 using babel
+     * 
+     * @param {Object} casper The casperjs instance
+     * @param {Object} phantom The phantomjs instance
+     * @param {string} testPath The relative path to the transpiled casper tests
+     * @param {Object<number, string>} browser The browser width, height, and userAgent for the test
+     * @param {string} startUrl The url to start the test
+     */
     constructor(casper, phantom, testPath, browser, startUrl) {
         this.casper = casper;
         this.phantom = phantom;
@@ -21,17 +30,35 @@ export default class CasperTestRunner {
         this.setCasperOptions({viewportSize: {width: 1024, height: 2000}, waitTimeout: 50000});
     }
 
+    /**
+     * Sets the casper browser options
+     * @returns {void}
+     */
     setupBrowser() {
         this.casper.viewport(this.browser.width, this.browser.height);
         this.casper.userAgent(this.browser.userAgent);
     }
 
+    /**
+     * Sets casper options in the casper.options object
+     * 
+     * @param {Object} options The options to set in casper
+     * 
+     * @returns {void}
+     */
     setCasperOptions(options) {
         for (var k in options) {
             this.casper.options[k] = options[k];
         }
     }
 
+    /**
+     * Gets all of the test function names from a file
+     * 
+     * @param {string} file The contents of a test class file
+     * 
+     * @returns {Array} The tests found in the file
+     */
     getTests(file) {
         let tests = [], regex = /key\:\s\'([\w\d-_]+)\'/gi, result;
 
@@ -44,6 +71,11 @@ export default class CasperTestRunner {
         return tests;
     }
 
+    /**
+     * Retrieves all of the test files and puts all of their information into the testFiles array
+     * 
+     * @param {string} path The path to the tests
+     */
     findTestFiles(path) {
         let list = this.fs.list(fs.workingDirectory + '/' + path), file, fileData, className, tests;
 
@@ -67,6 +99,13 @@ export default class CasperTestRunner {
         }
     }
 
+    /**
+     * Runs a test with the given test params
+     * 
+     * @param {Object<string, Array>} testObj 
+     * 
+     * @returns {void}
+     */
     runTest(testObj) {
         let mod = require(this.scriptDirectory + '/' + testObj.file);
         let inst = new mod.default(this.cm);
@@ -109,6 +148,11 @@ export default class CasperTestRunner {
         });
     }
 
+    /**
+     * Runs all of the test in the given test folder
+     * 
+     * @returns {void}
+     */
     run() {
         // get all the test information
         this.findTestFiles(this.testPath);

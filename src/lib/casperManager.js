@@ -5,6 +5,11 @@
 import * as Q from 'q';
 
 export default class CasperManager {
+    /**
+     * Class to manage casper and DOM interactions
+     * @param casper The casper object passed as global
+     * @param phantom The phantom object passed as global
+     */
     constructor(casper, phantom) {
         this.casper = casper;
         this.phantom = phantom;
@@ -12,6 +17,14 @@ export default class CasperManager {
         this.failCount = 0;
     }
 
+    /**
+     * Set debug options in casper
+     *
+     * @param {Boolean} debug Whether to have debug mode turned on
+     * @param {string} baseName The folder name for logging output and image captures
+     *
+     * @returns {void}
+     */
     setDebug(debug, baseName) {
         let self = this;
 
@@ -47,6 +60,13 @@ export default class CasperManager {
         );
     }
 
+    /**
+     * Clicks an element in the DOM after waiting for the element to be there
+     *
+     * @param {string} selector The selector of the element to be clicked
+     *
+     * @returns {void}
+     */
     click(selector) {
         let self = this;
 
@@ -55,6 +75,13 @@ export default class CasperManager {
         });
     }
 
+    /**
+     * Retrieves the text from an element
+     *
+     * @param {string} selector The selector of the element from which to get the text
+     *
+     * @returns {*} Promise that resolves with the text
+     */
     getText(selector) {
         let self = this,
             deferred = Q.defer();
@@ -66,6 +93,14 @@ export default class CasperManager {
         return deferred;
     }
 
+    /**
+     * Waits for a selector to be available on the page
+     *
+     * @param {string} selector The selector for which to wait
+     * @param {Function} cb A callback function once the element is available
+     *
+     * @returns {void}
+     */
     waitForSelector(selector, cb) {
         let self = this;
 
@@ -74,6 +109,11 @@ export default class CasperManager {
         });
     }
 
+    /**
+     * Waits until selector no longer exists in the DOM
+     *
+     * @param {string} selector The selector of the element to wait for
+     */
     waitWhileSelector(selector) {
         let self = this;
 
@@ -82,6 +122,15 @@ export default class CasperManager {
         });
     }
 
+    /**
+     * Evaluates an expression in the current page DOM context
+     *
+     * @param {Object} params The params to be used in the evaluate callback
+     * @param {Function} cb The script to execute against the DOM
+     * @param {string} waitForSelector Optional selector to wait for before executing the callback
+     *
+     * @returns {*|promise}
+     */
     evaluate(params, cb, waitForSelector) {
         let self = this,
             deferred = Q.defer();
@@ -101,6 +150,12 @@ export default class CasperManager {
         return deferred.promise;
     }
 
+    /**
+     * Types text into an input field
+     *
+     * @param {string} selector The selector of the field to type into
+     * @param {string} keys The text to type
+     */
     sendKeys(selector, keys) {
         let self = this;
 
@@ -109,33 +164,80 @@ export default class CasperManager {
         });
     }
 
-    elementGetHelper(selector, getter) {
+    /**
+     * Helper method for casper element getters
+     * 
+     * @param {string} selector The element selector
+     * @param {Function} getter the casper method to call
+     * @param {string?} attr (Optional) The attribute to get from the element
+     * @returns {*|promise}
+     */
+    elementGetHelper(selector, getter, attr) {
         let deferred = Q.defer();
 
         this.waitForSelector(selector, () => {
-            let arr = getter(selector, attr);
+            let arr;
+            
+            if (attr) {
+                arr = getter(selector, attr);
+            } else {
+                arr = getter(selector);
+            }
+            
             deferred.resolve(arr.length == 1 ? arr[0] : arr);
         });
 
         return deferred.promise;
     }
 
+    /**
+     * Gets an attibute from all elements matching the selector
+     *
+     * @param {string} selector The element selector
+     * @param {string} attr The attribute to get
+     * 
+     * @returns {*|promise}
+     */
     getAttribute(selector, attr) {
-        return this.elementGetHelper(selector, this.casper.getElementsAttribute);
+        return this.elementGetHelper(selector, this.casper.getElementsAttribute, attr);
     }
 
+    /**
+     * Retrieves the boundaries (coordinates) of the elements with the given selector
+     *
+     * @param {string} selector The element selector
+     * 
+     * @returns {*|promise}
+     */
     getBounds(selector) {
-        return this.elementGetHelper(selector, this.casper.getElementsBounds);
+        return this.elementGetHelper(selector, this.casper. getElementsBounds);
     }
 
+    /**
+     * Retrieves all of the info of the elements with the given selector
+     *
+     * @param {string} selector The element selector
+     *
+     * @returns {*|promise}
+     */
     getInfo(selector) {
         return this.elementGetHelper(selector, this.casper.getElementsInfo);
     }
 
+    /**
+     * Retrieves the casper instance
+     * 
+     * @returns {*}
+     */
     getCasper() {
         return this.casper;
     }
 
+    /**
+     * Retrieves the phantom instance
+     * 
+     * @returns {*}
+     */
     getPhantom() {
         return this.phantom;
     }
