@@ -54,6 +54,8 @@ Everything in the casper wrapper class is also promise based. So, for example, i
 
 Here is an example of a basic test class
 ```
+export const description = "This is your class description. What are you testing?";
+export const numTests = 2; // This is how many asserts there are in your test class
 export default class MyFirstTestClass {
   constructor(cm) {
     this.cm = cm; // casper wrapper
