@@ -12,7 +12,7 @@ And in your package.json file
 ```
 {
   "scripts": {
-    "e2e-tests": "babel tests/e2e/src --presets babel-preset-es2015 --out-dir tests/e2e/dist && casperjs test tests/e2e/dist/index.js"
+    "e2e-tests": "./node_modules/babel-cli/bin/babel.js tests/e2e/src --presets babel-preset-es2015 --out-dir tests/e2e/dist && casperjs test tests/e2e/dist/index.js"
   }
 }
 ```
@@ -35,10 +35,10 @@ Once it is installed create a your main test file
 ```
 import CasperTestRunner from 'casper-test-runner';
 
-let config = { // these are the defaults
-  testPath: '../../../tests/e2e/dist/', // the location of your transpiled tests
-  browser: {width: 1024, height: 768, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:36.0) Gecko/20100101 Firefox/36.0'},
-  startUrl: 'https://www.google.com/' // the url to open on startup
+let config = [ // these are the defaults
+  'tests/e2e/dist/', // the location of your transpiled tests (path from project root)
+  {width: 1024, height: 768, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:36.0) Gecko/20100101 Firefox/36.0'},
+  'https://www.google.com/' // the url to open on startup
 };
 let ctr = new CasperTestRunner(casper, phantom, ...config);
 
