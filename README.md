@@ -86,3 +86,44 @@ export default class MyFirstTestClass {
   }
 }
 ```
+
+## Writing Library Classes
+
+When writing classes that interact with the DOM the Page Object Model (POM) design pattern should be used. See this article as a reference [POM](http://martinfowler.com/bliki/PageObject.html)
+
+Example google.com homepage POM class
+```
+import GoogleSRP from './GoogleSRP';
+
+export default class GoogleHomePage {
+  constructor(cm) {
+    this.cm = cm;
+    this.casper = cm.getCasper();
+    this.phantom = cm.getPhantom();
+    
+    // page elements
+    this.searchBox = '#lst-ib';
+    this.searchBtn = '[name="btnK"]';
+    this.feelingLuckyBtn = '#gbqfbb';
+  }
+  
+  enterSearch(searchStr) {
+    this.cm.sendKeys(this.searchBox, searchStr);
+  }
+  
+  search(searchStr) {
+    this.enterSearch(searchStr);
+    this.cm.click(this.searchBtn);
+    return new GoogleSRP(this.cm); // returns instance of GoogleSRP class for easy method chaining
+  }
+  
+  feelingLucky(searchStr) {
+    this.enterSearch(searchStr);
+    this.cm.click(this.feelingLuckyBtn);
+  }
+  
+  getSearchText() {
+    return this.cm.getText(this.searchBox); // returns promise
+  }
+}
+```
