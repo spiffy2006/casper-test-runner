@@ -12,7 +12,7 @@ And in your package.json file
 ```
 {
   "scripts": {
-    "e2e-tests": "babel tests/e2e/src --presets babel-preset-es2015 --out-dir tests/e2e/dist && casperjs test tests/e2e/dist/index.js"
+    "e2e-tests": "./node_modules/babel-cli/bin/babel.js tests/e2e/src --presets babel-preset-es2015 --out-dir tests/e2e/dist && casperjs test tests/e2e/dist/index.js"
   }
 }
 ```
