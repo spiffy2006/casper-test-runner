@@ -28,7 +28,7 @@ git clone https://github.com/spiffy2006/casper-test-runner.git
 ```
 or npm install the module
 ```
-npm install casper-test-runner
+npm install casper-test-runner --save-dev
 ```
 
 Once it is installed create a your main test file
