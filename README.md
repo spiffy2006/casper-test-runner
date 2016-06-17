@@ -97,9 +97,9 @@ import GoogleSRP from './GoogleSRP';
 
 export default class GoogleHomePage {
   constructor(cm) {
-    this.cm = cm;
-    this.casper = cm.getCasper();
-    this.phantom = cm.getPhantom();
+    this.cm = cm; // CasperManager instance
+    this.casper = cm.getCasper(); // raw casper object
+    this.phantom = cm.getPhantom(); // raw phantom object
     
     // page elements
     this.searchBox = '#lst-ib';
