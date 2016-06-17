@@ -55,6 +55,17 @@ export default class CasperManager {
         });
     }
 
+    getText(selector) {
+        let self = this,
+            deferred = Q.defer();
+
+        this.waitForSelector(selector, () => {
+            deferred.resolve(self.casper.fetchText(selector));
+        });
+
+        return deferred;
+    }
+
     waitForSelector(selector, cb) {
         let self = this;
 
