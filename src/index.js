@@ -16,14 +16,13 @@ export default class CasperTestRunner {
         this.testFiles = [];
         this.tests = [];
         this.fs = require('fs');
-        this.utils = require('utils');
         this.scriptName = this.fs.absolute( require("system").args[3] );
         this.scriptDirectory = this.scriptName.substring(0, this.scriptName.lastIndexOf('/'));
         this.setCasperOptions({viewportSize: {width: 1024, height: 2000}, waitTimeout: 50000});
     }
 
     setupBrowser() {
-        this.casper.viewport(this.browser.width, browser.height);
+        this.casper.viewport(this.browser.width, this.browser.height);
         this.casper.userAgent(this.browser.userAgent);
     }
 
@@ -46,7 +45,7 @@ export default class CasperTestRunner {
     }
 
     findTestFiles(path) {
-        let list = this.fs.list(path), file, fileData, className, tests;
+        let list = this.fs.list(fs.workingDirectory + '/' + path), file, fileData, className, tests;
 
         for (let i = 0; i < list.length; i++) {
             this.casper.echo(path + list[i]);
@@ -111,7 +110,6 @@ export default class CasperTestRunner {
     }
 
     run() {
-        this.setupBrowser();
         // get all the test information
         this.findTestFiles(this.testPath);
 
