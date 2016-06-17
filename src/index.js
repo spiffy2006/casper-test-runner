@@ -111,6 +111,7 @@ export default class CasperTestRunner {
     }
 
     run() {
+        this.setupBrowser();
         // get all the test information
         this.findTestFiles(this.testPath);
 
