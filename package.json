@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src --presets babel-preset-es2015 --out-dir dist",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test-e2e": "babel src --presets babel-preset-es2015 --out-dir dist && casperjs test --log-level=debug dist/run.js"
   },
   "keywords": [],
   "author": "Jacob Cox <jcox@deseretdigital.com>",

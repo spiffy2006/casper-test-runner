@@ -60,10 +60,11 @@ export default class CasperTestRunner {
      * @returns {Array} The tests found in the file
      */
     getTests(file) {
-        let tests = [], regex = /key\:\s\'([\w\d-_]+)\'/gi, result;
+        let tests = [], regex = /\@test[\s\S]+?(?=key:\s?[\"\'])key:\s?[\"\']([\w\d-_]+)[\"\']/gi, result;
 
         while (result = regex.exec(file)) {
-            if (result[1] && result[1].match(/test/i)) {
+            this.casper.echo(JSON.stringify(result));
+            if (result[1]) {
                 tests.push(result[1]);
             }
         }
@@ -80,7 +81,6 @@ export default class CasperTestRunner {
         let list = this.fs.list(fs.workingDirectory + '/' + path), file, fileData, className, tests;
 
         for (let i = 0; i < list.length; i++) {
-            this.casper.echo(path + list[i]);
             file = path + list[i];
 
             // ignore current and parent directories
@@ -90,10 +90,11 @@ export default class CasperTestRunner {
                 this.findTestFiles(file + '/');
             } else if (this.fs.isFile(file) && list[i].indexOf('.test.js') != -1) {
                 fileData = this.fs.read(file);
-                className = fileData.match(/exports.default\s\=\s([\W\D-_]+);/);
+                className = fileData.match(/exports.default\s\=\s([\w\d-_]+);/);
                 tests = this.getTests(fileData);
                 if (className) {
                     this.testFiles.push({file, className: className[1], tests});
+                    this.casper.echo(className[1]);
                 }
             }
         }
