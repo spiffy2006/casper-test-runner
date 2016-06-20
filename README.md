@@ -52,6 +52,8 @@ ctr.run();
 Your tests will be written as an es6 class that takes one parameter in it's constructor. The parameter is a casper wrapper class that simplifies casper DOM interactions without all of the overhead of waiting for selectors and calling casper.then.
 Everything in the casper wrapper class is also promise based. So, for example, if you call evaluate you just chain a then to it, and get your data from the evaluate back.
 
+The tests in your class need to be annotated with an @test in a [DocBlock](http://devdocs.magento.com/guides/v2.0/coding-standards/docblock-standard-javascript.html) manner in order for the runner to recognize it as a test method.
+
 Here is an example of a basic test class
 ```
 export const description = "This is your class description. What are you testing?";
@@ -69,9 +71,12 @@ export default class MyFirstTestClass {
   setUp() {
     // This method gets called before each test in your class
   }
-  
-  testSomething(test) {
-    // your test methods need to have the word test in them, that is how the runner knows that it is a test method
+  /**
+  * This is a description of the test
+  * @test <-- This is what tells the test runner that this is a test method
+  * @param test
+  */
+  doTheThings(test) {
     // test is the casper test object that contains all of your assert functions that casper gives you
     this.cm.click(this.button); // click something
     test.assert(true, "true is true");
