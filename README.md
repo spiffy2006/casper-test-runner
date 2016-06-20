@@ -71,6 +71,7 @@ export default class MyFirstTestClass {
   setUp() {
     // This method gets called before each test in your class
   }
+  
   /**
   * This is a description of the test
   * @test <-- This is what tells the test runner that this is a test method
