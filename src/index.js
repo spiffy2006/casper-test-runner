@@ -63,7 +63,6 @@ export default class CasperTestRunner {
         let tests = [], regex = /\@test[\s\S]+?(?=key:\s?[\"\'])key:\s?[\"\']([\w\d-_]+)[\"\']/gi, result;
 
         while (result = regex.exec(file)) {
-            this.casper.echo(JSON.stringify(result));
             if (result[1]) {
                 tests.push(result[1]);
             }
@@ -94,7 +93,6 @@ export default class CasperTestRunner {
                 tests = this.getTests(fileData);
                 if (className) {
                     this.testFiles.push({file, className: className[1], tests});
-                    this.casper.echo(className[1]);
                 }
             }
         }
