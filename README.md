@@ -12,7 +12,7 @@ And in your package.json file
 ```
 {
   "scripts": {
-    "e2e-tests": "./node_modules/babel-cli/bin/babel.js tests/e2e/src --presets babel-preset-es2015 --out-dir tests/e2e/dist && casperjs test tests/e2e/dist/index.js"
+    "e2e-tests": "./node_modules/babel-cli/bin/babel.js tests/e2e/src --presets babel-preset-es2015 --out-dir tests/e2e/dist && ./node_modules/casperjs/bin/casperjs test tests/e2e/dist/index.js"
   }
 }
 ```
@@ -92,6 +92,17 @@ export default class MyFirstTestClass {
   }
 }
 ```
+
+### Testing Tests
+To test a test class or multiple test classes:
+```
+npm run e2e-tests -- --testFiles=path/to/your/test.js,path/to/different/test.js
+```
+
+testFiles is a comma separated string with the relative path from the test directory specified in your run.js file.
+
+So if your tests are in ```tests/e2e/dist``` and your test class that you want to run is in ```tests/e2e/dist/google/testSearch.test.js``` you would run the command
+```npm run e2e-tests -- --testFiles=google/testSearch.test.js``` to test that class.
 
 ## Writing Library Classes
 
