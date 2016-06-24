@@ -88,13 +88,30 @@ export default class CasperTestRunner {
             } else if (fs.isDirectory(file)) {
                 this.findTestFiles(file + '/');
             } else if (this.fs.isFile(file) && list[i].indexOf('.test.js') != -1) {
-                fileData = this.fs.read(file);
-                className = fileData.match(/exports.default\s\=\s([\w\d-_]+);/);
-                tests = this.getTests(fileData);
-                if (className) {
-                    this.testFiles.push({file, className: className[1], tests});
+                fileData = this.getFileData(file);
+                if (fileData) {
+                    this.testFiles.push(fileData);
                 }
             }
+        }
+    }
+
+    /**
+     * Parses the test file, and and gets the class name and the test method names
+     *
+     * @param {string} file The path to the test file
+     *
+     * @returns {*}
+     */
+    getFileData(file) {
+        this.casper.echo(file);
+        let fileData = this.fs.read(file);
+        let className = fileData.match(/exports.default\s\=\s([\w\d-_]+);/);
+        let tests = this.getTests(fileData);
+        if (className) {
+            return {file, className: className[1], tests};
+        } else {
+            return null;
         }
     }
 
@@ -148,13 +165,37 @@ export default class CasperTestRunner {
     }
 
     /**
+     * Checks to see if the testFiles flag has been passed and puts them in the testFiles array if they have
+     *
+     * @returns {boolean}
+     */
+    getCliTestFiles() {
+        let self = this;
+
+        if (!this.casper.cli.has('testFiles')) {
+            return false;
+        } else {
+            this.casper.cli.get('testFiles').split(',').forEach((fileName) => {
+                let fileData = self.getFileData(self.testPath + fileName);
+                if (fileData) {
+                    self.testFiles.push(fileData);
+                }
+            });
+
+            return true;
+        }
+    }
+
+    /**
      * Runs all of the test in the given test folder
      * 
      * @returns {void}
      */
     run() {
-        // get all the test information
-        this.findTestFiles(this.testPath);
+        if (!this.getCliTestFiles()) {
+            // get all the test information
+            this.findTestFiles(this.testPath);
+        }
 
         // run all the tests
         for (var i = 0; i < this.testFiles.length; i++) {
