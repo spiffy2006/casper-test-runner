@@ -9,6 +9,10 @@
     "prepublish": "npm run build",
     "test-e2e": "./node_modules/babel-cli/bin/babel.js src --presets babel-preset-es2015 --out-dir dist && ./node_modules/casperjs/bin/casperjs test --log-level=debug dist/run.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spiffy2006/casper-test-runner.git"
+  },
   "keywords": [],
   "author": "Jacob Cox <jcox@deseretdigital.com>",
   "license": "ISC",
