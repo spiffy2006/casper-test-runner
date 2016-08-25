@@ -52,7 +52,9 @@ ctr.run();
 Your tests will be written as an es6 class that takes one parameter in it's constructor. The parameter is a casper wrapper class that simplifies casper DOM interactions without all of the overhead of waiting for selectors and calling casper.then.
 Everything in the casper wrapper class is also promise based. So, for example, if you call evaluate you just chain a then to it, and get your data from the evaluate back.
 
-The tests in your class need to be annotated with an @test in a [DocBlock](http://devdocs.magento.com/guides/v2.0/coding-standards/docblock-standard-javascript.html) manner in order for the runner to recognize it as a test method. Each test should run 1 assert. If you are using more than 1 assert per @test, then you need to break it up a little more. This ensures test granularity, and that the test runner can accurately determine the number of tests you are running.
+The tests in your class need to be annotated with an @test in a [DocBlock](http://devdocs.magento.com/guides/v2.0/coding-standards/docblock-standard-javascript.html) manner in order for the runner to recognize it as a test method.
+
+Each test should run 1 assert. If you are using more than 1 assert per @test, then you need to break it up a little more. This ensures test granularity, and that the test runner can accurately determine the number of tests you are running.
 
 Here is an example of a basic test class
 ```
