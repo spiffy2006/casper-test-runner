@@ -3,7 +3,6 @@
  */
 
 export const description = 'Example Test Suite';
-export const numTests = 2;
 
 export default class Example1 {
     constructor(cm) {
@@ -26,5 +25,26 @@ export default class Example1 {
      */
     makeBoomBoom(test) {
         test.assert(true, "Also works!");
+    }
+
+    /**
+     * Test the assert changes I just made
+     * @test
+     * @param {Object} test The casperjs assertion object
+     */
+    testAssert(test) {
+        this.cm.comment("Wahoo!");
+        this.cm.assert('assertEquals', [1, 2, 3], [1, 2, 3], 'blah blah blah, it works');
+    }
+
+    /**
+     * Test the assert changes I just made
+     * @test
+     * @param {Object} test The casperjs assertion object
+     */
+    testWaitFor(test) {
+        this.cm.waitFor('wait', 500, () => {
+            this.cm.assert('assert', true, 'blah blah, it works');
+        });
     }
 }

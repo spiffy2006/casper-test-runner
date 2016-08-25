@@ -124,30 +124,43 @@ export default class CasperTestRunner {
      */
     runTest(testObj) {
         let mod = require(this.scriptDirectory + '/' + testObj.file);
-        let inst = new mod.default(this.cm);
 
-        this.casper.test.begin(mod.description, mod.numTests, (test) => {
+        this.casper.test.begin(mod.description, testObj.tests.length, (test) => {
+            
+            this.cm.setTestObject(test);
+            
+            let inst = new mod.default(this.cm);
             this.cm.setDebug(false, mod.description.replace(/\s/g, ''));
             this.casper.start(this.startUrl, () => {
                 this.setupBrowser();
             });
 
             if (inst.setUpBefore) {
-                inst.setUpBefore();
+                this.casper.then(() => {
+                    inst.setUpBefore();
+                });
             }
 
             for (let i = 0; i < testObj.tests.length; i++) {
                 if (inst.setUp) {
-                    inst.setUp();
+                    this.casper.then(() => {
+                        inst.setUp();
+                    });
                 }
-                inst[testObj.tests[i]](test);
+                this.casper.then(() => {
+                    inst[testObj.tests[i]](test);
+                });
                 if (inst.tearDown) {
-                    inst.tearDown();
+                    this.casper.then(() => {
+                        inst.tearDown();
+                    });
                 }
             }
 
             if (inst.tearDownAfter) {
-                inst.tearDownAfter();
+                this.casper.then(() => {
+                    inst.tearDownAfter();
+                });
             }
 
             this.casper.run(

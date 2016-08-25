@@ -97,28 +97,50 @@ export default class CasperManager {
      * Waits for a selector to be available on the page
      *
      * @param {string} selector The selector for which to wait
-     * @param {Function} cb A callback function once the element is available
+     * @param {Function} args The rest of the arguments. ie callback, onTimeout, timeout
      *
      * @returns {void}
      */
-    waitForSelector(selector, cb) {
+    waitForSelector(selector, ...args) {
         let self = this;
 
         this.casper.then(() => {
-            self.casper.waitForSelector(selector, cb);
+            self.casper.waitForSelector(selector, ...args);
         });
+    }
+
+    /**
+     * Wrapper for wait methods to make them psuedo synchronous
+     *
+     * @param method The wait method to call
+     * @param selector The selector to wait for
+     * @param args The rest of the arguments
+     *
+     * @returns {void}
+     */
+    waitFor(method, selector, ...args) {
+        if (this.casper[method] && method.indexOf('wait') > -1) {
+            this.casper.then(() =>{
+                self.casper[method](selector, ...args);
+            });
+        } else {
+            throw new Error("Param 'method' must be a casperjs wait function.")
+        }
     }
 
     /**
      * Waits until selector no longer exists in the DOM
      *
      * @param {string} selector The selector of the element to wait for
+     * @param args All of the other arguments. ie callback, onTimeout, and timeout
+     *
+     * @returns {void}
      */
-    waitWhileSelector(selector) {
+    waitWhileSelector(selector, ...args) {
         let self = this;
 
         this.waitForSelector(selector, () => {
-            self.casper.waitWhileSelector(selector);
+            self.casper.waitWhileSelector(selector, ...args);
         });
     }
 
@@ -240,5 +262,63 @@ export default class CasperManager {
      */
     getPhantom() {
         return this.phantom;
+    }
+
+    /**
+     * Sets the test object from casperjs
+     *
+     * @param {Object} test The casperjs test object
+     *
+     * @returns {void}
+     */
+    setTestObject(test) {
+        this.test = test;
+    }
+
+    /**
+     * Uses the casperjs test.comment function if available, or uses casper.echo if not, and is beautifully wrapped in a casper.then
+     *
+     * @param {String} text The text to write to the console
+     *
+     * @returns {void}
+     */
+    comment(text) {
+        this.casper.then(() => {
+            if (this.test) {
+                this.test.comment(text);
+            } else {
+                this.casper.echo('# ' + text);
+            }
+        });
+    }
+
+    /**
+     * casper.echo wrapper that places the echo in a casper.then
+     *
+     * @param {String} text The text to write to the console
+     *
+     * @returns {void}
+     */
+    echo(text) {
+        this.casper.then(() => {
+            this.casper.echo(text);
+        });
+    }
+
+    /**
+     * Wrapper for all casperjs asserts, because I am too lazy to write them all out
+     *  Wraps method in a casper.then and spreads arguments out into the actual method
+     *
+     * @param method The assert method to call
+     * @param args Array of arguments converted from actual arguments (Thank you es6)
+     */
+    assert(method, ...args) {
+        if (this.test[method] && method.indexOf('assert') > -1) {
+            this.casper.then(() => {
+                this.test[method](...args);
+            });
+        } else {
+            throw new Error("Param method must be a valid casperjs test assert method.")
+        }
     }
 }
