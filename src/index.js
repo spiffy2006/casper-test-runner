@@ -28,6 +28,7 @@ export default class CasperTestRunner {
         this.scriptName = this.fs.absolute( require("system").args[3] );
         this.scriptDirectory = this.scriptName.substring(0, this.scriptName.lastIndexOf('/'));
         this.setCasperOptions({viewportSize: {width: 1024, height: 2000}, waitTimeout: 50000});
+        this.testSuitesCompleted = 0;
     }
 
     /**
@@ -116,6 +117,15 @@ export default class CasperTestRunner {
     }
 
     /**
+     * Exits phantomjs
+     */
+    exitPhantom() {
+        setTimeout(() => {
+                this.phantom.exit();
+            }, 1000);
+    }
+
+    /**
      * Runs a test with the given test params
      * 
      * @param {Object<string, Array>} testObj 
@@ -161,17 +171,16 @@ export default class CasperTestRunner {
                 this.casper.then(() => {
                     inst.tearDownAfter();
                 });
+                this.testSuitesCompleted++;
+                
+                if (this.testSuitesCompleted == this.testFiles.length) {
+                    this.exitPhantom();
+                }
             }
 
             this.casper.run(
                 () => {
                     test.done();
-                    setTimeout(
-                        () => {
-                            this.phantom.exit();
-                        },
-                        10
-                    );
                 }
             );
         });
