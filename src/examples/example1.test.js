@@ -7,6 +7,7 @@ export const description = 'Example Test Suite';
 export default class Example1 {
     constructor(cm) {
         this.cm = cm;
+        this.casper = cm.getCasper();
     }
 
     /**
@@ -45,6 +46,22 @@ export default class Example1 {
     testWaitFor(test) {
         this.cm.waitFor('wait', 500, () => {
             this.cm.assert('assert', true, 'blah blah, it works');
+        });
+    }
+
+    /**
+     * Test that casper manager send keys works
+     * @test
+     * @param {Object} test The casperjs assertion object
+     */
+    testSendKeys(test) {
+        let selector = '#searchInput';
+        this.casper.thenOpen('https://wikipedia.org', () => {
+            this.cm.sendKeys(selector, 'asdf');
+            this.cm.evaluate(selector, (selector) => { return document.querySelector(selector).value; }, selector)
+                .then((input) => {
+                    this.cm.assert('assert', input == 'asdf', 'Send Keys Worked!');
+                });
         });
     }
 }

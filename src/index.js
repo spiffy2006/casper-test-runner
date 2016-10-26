@@ -54,6 +54,29 @@ export default class CasperTestRunner {
     }
 
     /**
+     * Whether there were specific tests passed through the cli
+     * 
+     * @returns {boolean}
+     */
+    cliHasTests() {
+        return this.casper.cli.has('tests');
+    }
+
+    /**
+     * Gets the tests from the cli and returns them in an array
+     * 
+     * @returns {Array}
+     */
+    getCliTests() {
+        let tests = [];
+        this.casper.cli.get('tests').split(',').forEach((test) => {
+            tests.push(test);
+        });
+
+        return tests;
+    }
+
+    /**
      * Gets all of the test function names from a file
      * 
      * @param {string} file The contents of a test class file
@@ -61,6 +84,10 @@ export default class CasperTestRunner {
      * @returns {Array} The tests found in the file
      */
     getTests(file) {
+        if (this.cliHasTests()) {
+            return this.getCliTests();
+        }
+
         let tests = [], regex = /\@test[\s\S]+?(?=key:\s?[\"\'])key:\s?[\"\']([\w\d-_]+)[\"\']/gi, result;
 
         while (result = regex.exec(file)) {
@@ -158,6 +185,7 @@ export default class CasperTestRunner {
                     });
                 }
                 this.casper.then(() => {
+                    this.cm.comment("Executing test: " + testObj.tests[i]);
                     inst[testObj.tests[i]](test);
                 });
                 if (inst.tearDown) {

@@ -105,6 +105,13 @@ testFiles is a comma separated string with the relative path from the test direc
 So if your tests are in ```tests/e2e/dist``` and your test class that you want to run is in ```tests/e2e/dist/google/testSearch.test.js``` you would run the command
 ```npm run e2e-tests -- --testFiles=google/testSearch.test.js``` to test that class.
 
+To test specific tests in a file:
+```
+npm run e2e-tests -- --testFiles=path/to/your/test.js --tests=test1,test2,test3
+```
+
+tests is a comma separated string with the tests that you want to run in the testFiles variable.
+
 ## Writing Library Classes
 
 When writing classes that interact with the DOM the Page Object Model (POM) design pattern should be used. See this article as a reference [POM](http://martinfowler.com/bliki/PageObject.html)
