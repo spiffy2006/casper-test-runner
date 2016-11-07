@@ -198,12 +198,12 @@ export default class CasperTestRunner {
             if (inst.tearDownAfter) {
                 this.casper.then(() => {
                     inst.tearDownAfter();
+                    this.testSuitesCompleted++;
+                    
+                    if (this.testSuitesCompleted == this.testFiles.length) {
+                        this.exitPhantom();
+                    }
                 });
-                this.testSuitesCompleted++;
-                
-                if (this.testSuitesCompleted == this.testFiles.length) {
-                    this.exitPhantom();
-                }
             }
 
             this.casper.run(
