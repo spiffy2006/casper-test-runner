@@ -1,6 +1,6 @@
 {
   "name": "casper-test-runner",
-  "version": "0.0.75",
+  "version": "0.0.76",
   "description": "This is a test runner built on casperjs.",
   "main": "dist/index.js",
   "scripts": {

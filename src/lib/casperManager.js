@@ -90,7 +90,7 @@ export default class CasperManager {
             deferred.resolve(self.casper.fetchText(selector));
         });
 
-        return deferred;
+        return deferred.promise;
     }
 
     /**
