@@ -163,14 +163,11 @@ export default class CasperTestRunner {
         let mod = require(this.scriptDirectory + '/' + testObj.file);
 
         this.casper.test.begin(mod.description, testObj.tests.length, (test) => {
-            
+
             this.cm.setTestObject(test);
-            
+            this.cm.setCurrentBaseName(mod.description.replace(/\s/g, ''));
+
             let inst = new mod.default(this.cm);
-            this.cm.setDebug(false, mod.description.replace(/\s/g, ''));
-            this.casper.start(this.startUrl, () => {
-                this.setupBrowser();
-            });
 
             if (inst.setUpBefore) {
                 this.casper.then(() => {
@@ -199,18 +196,16 @@ export default class CasperTestRunner {
                 this.casper.then(() => {
                     inst.tearDownAfter();
                     this.testSuitesCompleted++;
-                    
+
                     if (this.testSuitesCompleted == this.testFiles.length) {
                         this.exitPhantom();
                     }
                 });
             }
 
-            this.casper.run(
-                () => {
-                    test.done();
-                }
-            );
+            this.casper.then(() => {
+                test.done();
+            })
         });
     }
 
@@ -247,9 +242,19 @@ export default class CasperTestRunner {
             this.findTestFiles(this.testPath);
         }
 
+        this.cm.setDebug(false);
+        this.casper.start(this.startUrl, () => {
+            this.setupBrowser();
+        });
+
         // run all the tests
         for (var i = 0; i < this.testFiles.length; i++) {
-            this.runTest(this.testFiles[i]);
+            this.casper.then(function(iteration) {
+                casper.echo('iteration: ' + iteration);
+                this.runTest(this.testFiles[iteration]);
+            }.bind(this, i));
         }
+
+        this.casper.run();
     }
 }

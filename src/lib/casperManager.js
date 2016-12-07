@@ -15,17 +15,25 @@ export default class CasperManager {
         this.phantom = phantom;
 
         this.failCount = 0;
+        this.baseName = '';
+    }
+
+    /**
+     * Sets the current baseName for logging output and image captures
+     * @param {string} baseName The folder name for logging output and image captures
+     */
+    setCurrentBaseName(baseName) {
+        this.baseName = baseName;
     }
 
     /**
      * Set debug options in casper
      *
      * @param {Boolean} debug Whether to have debug mode turned on
-     * @param {string} baseName The folder name for logging output and image captures
      *
      * @returns {void}
      */
-    setDebug(debug, baseName) {
+    setDebug(debug) {
         let self = this;
 
         if (this.casper.cli.get('trace') == true) {
@@ -54,7 +62,7 @@ export default class CasperManager {
             'fail',
             function() {
                 self.failCount++;
-                self.casper.capture('screenshots/'+ baseName + '/' + baseName + '_fail_' + self.failCount + '.png');
+                self.casper.capture('screenshots/'+ self.baseName + '/' + self.baseName + '_fail_' + self.failCount + '.png');
                 self.casper.echo("Failed - image captured");
             }
         );
