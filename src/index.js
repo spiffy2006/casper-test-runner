@@ -161,51 +161,54 @@ export default class CasperTestRunner {
      */
     runTest(testObj) {
         let mod = require(this.scriptDirectory + '/' + testObj.file);
-
+        this.casper.echo('mod required');
         this.casper.test.begin(mod.description, testObj.tests.length, (test) => {
-
-            this.cm.setTestObject(test);
-            this.cm.setCurrentBaseName(mod.description.replace(/\s/g, ''));
-
-            let inst = new mod.default(this.cm);
-
-            if (inst.setUpBefore) {
-                this.casper.then(() => {
-                    inst.setUpBefore();
-                });
-            }
-
-            for (let i = 0; i < testObj.tests.length; i++) {
-                if (inst.setUp) {
+            this.casper.then(() => {
+                this.casper.echo('test begun');
+                this.cm.setTestObject(test);
+                this.cm.setCurrentBaseName(mod.description.replace(/\s/g, ''));
+    
+                let inst = new mod.default(this.cm);
+                this.casper.echo('instance created');
+                if (inst.setUpBefore) {
                     this.casper.then(() => {
-                        inst.setUp();
+                        inst.setUpBefore();
                     });
                 }
-                this.casper.then(() => {
-                    this.cm.comment("Executing test: " + testObj.tests[i]);
-                    inst[testObj.tests[i]](test);
-                });
-                if (inst.tearDown) {
+    
+                for (let i = 0; i < testObj.tests.length; i++) {
+                    if (inst.setUp) {
+                        this.casper.then(() => {
+                            inst.setUp();
+                        });
+                    }
                     this.casper.then(() => {
-                        inst.tearDown();
+                        this.cm.comment("Executing test: " + testObj.tests[i]);
+                        inst[testObj.tests[i]](test);
+                    });
+                    if (inst.tearDown) {
+                        this.casper.then(() => {
+                            inst.tearDown();
+                        });
+                    }
+                }
+    
+                if (inst.tearDownAfter) {
+                    this.casper.then(() => {
+                        inst.tearDownAfter();
                     });
                 }
-            }
-
-            if (inst.tearDownAfter) {
+                
                 this.casper.then(() => {
-                    inst.tearDownAfter();
+                    test.done();
                     this.testSuitesCompleted++;
-
+    
                     if (this.testSuitesCompleted == this.testFiles.length) {
+                        casper.echo('EXITING PHANTOM');
                         this.exitPhantom();
                     }
                 });
-            }
-
-            this.casper.then(() => {
-                test.done();
-            })
+            });
         });
     }
 
@@ -249,10 +252,7 @@ export default class CasperTestRunner {
 
         // run all the tests
         for (var i = 0; i < this.testFiles.length; i++) {
-            this.casper.then(function(iteration) {
-                casper.echo('iteration: ' + iteration);
-                this.runTest(this.testFiles[iteration]);
-            }.bind(this, i));
+            this.runTest(this.testFiles[i]);
         }
 
         this.casper.run();
