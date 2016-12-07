@@ -132,7 +132,6 @@ export default class CasperTestRunner {
      * @returns {*}
      */
     getFileData(file) {
-        this.casper.echo(file);
         let fileData = this.fs.read(file);
         let className = fileData.match(/exports.default\s\=\s([\w\d-_]+);/);
         let tests = this.getTests(fileData);
@@ -161,15 +160,14 @@ export default class CasperTestRunner {
      */
     runTest(testObj) {
         let mod = require(this.scriptDirectory + '/' + testObj.file);
-        this.casper.echo('mod required');
+
         this.casper.test.begin(mod.description, testObj.tests.length, (test) => {
             this.casper.then(() => {
-                this.casper.echo('test begun');
                 this.cm.setTestObject(test);
                 this.cm.setCurrentBaseName(mod.description.replace(/\s/g, ''));
     
                 let inst = new mod.default(this.cm);
-                this.casper.echo('instance created');
+
                 if (inst.setUpBefore) {
                     this.casper.then(() => {
                         inst.setUpBefore();
@@ -204,7 +202,6 @@ export default class CasperTestRunner {
                     this.testSuitesCompleted++;
     
                     if (this.testSuitesCompleted == this.testFiles.length) {
-                        casper.echo('EXITING PHANTOM');
                         this.exitPhantom();
                     }
                 });

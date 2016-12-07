@@ -61,9 +61,10 @@ export default class CasperManager {
         this.casper.test.on(
             'fail',
             function() {
+                let fileName = self.baseName + '_fail_' + self.failCount + '.png';
                 self.failCount++;
-                self.casper.capture('screenshots/'+ self.baseName + '/' + self.baseName + '_fail_' + self.failCount + '.png');
-                self.casper.echo("Failed - image captured");
+                self.casper.capture('screenshots/'+ self.baseName + '/' + fileName);
+                self.casper.echo("Failed - image captured: " + fileName);
             }
         );
     }
