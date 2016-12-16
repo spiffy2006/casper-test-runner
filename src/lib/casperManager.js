@@ -191,9 +191,7 @@ export default class CasperManager {
         let self = this;
 
         this.waitForSelector(selector, () => {
-            self.evaluate({selector, keys}, (selector, keys) => {
-                document.querySelector(selector).value = keys;
-            }, selector);
+            self.sendKeys(selector, keys);
         });
     }
 
